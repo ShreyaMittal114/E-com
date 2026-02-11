@@ -1,5 +1,6 @@
 package com.example.ecom_project.service;
 
+import com.example.ecom_project.Exception.ProductNotFound;
 import com.example.ecom_project.model.Product;
 import com.example.ecom_project.repo.ProductRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +15,16 @@ public class ProductService {
      @Autowired
      public ProductRepo repo;
     public List<Product> getAllProducts() {
+        if(repo.findAll()==null){
+            throw new ProductNotFound("not available");
+        }
         return  repo.findAll();
     }
 
     public  Product getProductById(int id) {
-        return repo.findById(id).orElse(null);
+
+        return repo.findById(id).orElseThrow(()-> new IllegalArgumentException("user with id does not exist"));
+
     }
 
     public Product addProduct(Product product, MultipartFile image) throws IOException {
